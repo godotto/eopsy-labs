@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+# flags
+help_flag=false
+recursion_flag=false
+lowercase_flag=false
+uppercase_flag=false
+
+# parameters handling with getopts
+while getopts :rluh param
+do
+    case $param in  # set flags according to parameters
+    h)  help_flag=true ;;
+    r)  recursion_flag=true ;;
+    l)  lowercase_flag=true ;;
+    u)  uppercase_flag=true ;;
+    ?)  echo Unknown argument
+        help_flag=true ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
