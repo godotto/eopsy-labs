@@ -33,11 +33,11 @@ if $help_flag; then # display help and terminate execution
     exit
 
 elif $lowercase_flag; then
-    mv $1 ${1,,}   # change all upercase letters in the name into lowercase
+    mv "$1" "${1,,}"   # change all upercase letters in the name into lowercase
 
 elif $uppercase_flag; then
-    mv $1 ${1^^}   # change all upercase letters in the name into lowercase
+    mv "$1" "${1^^}"   # change all upercase letters in the name into lowercase
 
 else                                      
-    mv $2 $(echo $2 | sed $1)   # change the name according to sed pattern
+    mv "$2" "$(echo "$2" | sed "$1")"   # change the name according to sed pattern
 fi
