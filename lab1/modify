@@ -19,9 +19,9 @@ do
     esac
 done
 
-shift $(($OPTIND - 1))
+shift $(($OPTIND - 1))  # shift positional arguments when all defined arguments are parsed
 
-if $help_flag; then
+if $help_flag; then # display help and terminate execution
     echo -e "Usage: modify [OPTION]... [SED PATTERN] [[DIR]FILE]"
     echo -e "Modify name of the FILEs.\n"
     echo -e "Options:"
@@ -31,4 +31,13 @@ if $help_flag; then
     echo -e " -h\t display this help\n"
     echo -e "Alternatively, a SED PATTERN may be used instead of uppercase and lowercase options."
     exit
+
+elif $lowercase_flag; then
+    mv $1 ${1,,}   # change all upercase letters in the name into lowercase
+
+elif $uppercase_flag; then
+    mv $1 ${1^^}   # change all upercase letters in the name into lowercase
+
+else                                      
+    mv $2 $(echo $2 | sed $1)   # change the name according to sed pattern
 fi
