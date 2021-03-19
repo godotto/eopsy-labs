@@ -1,0 +1,6 @@
+# text files for testing purpose
+*.txt
+*.TXT
+
+# shell script for experiments and trying different stuff 
+test.sh
