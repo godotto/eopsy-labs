@@ -36,10 +36,10 @@ Options:
 Alternatively, a SED PATTERN may be used instead of uppercase and lowercase options.
 EOT
 
-    exit
+    exit # terminate the script
 else
     sed_pattern=$1
-    IFS=$'\n'
+    IFS=$'\n'   # set the delimiter as new line character to avoid wrong filenames in variables
 
     for item in "$@"
     do 
@@ -66,7 +66,7 @@ else
                     mv -- "$file_with_path" "$dir_name/$(echo "$file_name" | sed "$1")"   # change the name according to sed pattern
                 done
             fi
-        else
+        elif [ -f $item ]; then
             if $lowercase_flag; then
                 file_name=$(basename $item)
                 dir_name=$(dirname $item)
