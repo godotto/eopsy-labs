@@ -22,14 +22,20 @@ done
 shift $(($OPTIND - 1))  # shift positional arguments when all defined arguments are parsed
 
 if $help_flag || ($uppercase_flag && $lowercase_flag) || ( [ $OPTIND -eq 1 ] && [ -z "$2" ]); then # display help and terminate execution
-    echo -e "Usage: modify [OPTION]... [SED PATTERN] [[DIR]FILE]"
-    echo -e "Modify name of the FILEs.\n"
-    echo -e "Options:"
-    echo -e " -r\t rename FILEs recursively"
-    echo -e " -l\t change all uppercase letters into lowercase letters"
-    echo -e " -u\t change all lowercase letters into uppercase letters"
-    echo -e " -h\t display this help\n"
-    echo -e "Alternatively, a SED PATTERN may be used instead of uppercase and lowercase options."
+
+    cat << EOT
+Usage: modify [OPTION] [SED PATTERN] [[DIR]FILEs]
+Modify name of the FILEs.
+
+Options:
+ -r     rename FILEs recursively
+ -l     change all uppercase letters into lowercase letters
+ -u     change all lowercase letters into uppercase letters
+ -h     display this help
+
+Alternatively, a SED PATTERN may be used instead of uppercase and lowercase options.
+EOT
+
     exit
 
 elif $recursion_flag; then # rename files in recursive way
