@@ -21,7 +21,7 @@ done
 
 shift $(($OPTIND - 1))  # shift positional arguments when all defined arguments are parsed
 
-# display help and terminate execution
+# display help and terminate execution when help flag is raised or parameters are invalid
 if $help_flag || ($uppercase_flag && $lowercase_flag) || ( [ $OPTIND -eq 1 ] && [ -z "$2" ]); then
 
     cat << EOT
@@ -39,48 +39,39 @@ EOT
 
     exit # terminate the script
 else
-    sed_pattern=$1
+    sed_pattern=$1  # if sed pattern will be used it will be taken from this variable
     IFS=$'\n'   # set the delimiter as new line character to avoid wrong filenames in variables
 
     for item in "$@"
     do 
         if $recursion_flag; then # rename files in recursive way
-            if $lowercase_flag; then
-                for file_with_path in $(find "$item" -type f)
+            for file_with_path in $(find "$item" -type f)
                 do
                     file_name=$(basename "$file_with_path")
                     dir_name=$(dirname "$file_with_path")
-                    mv -- "$file_with_path" "$dir_name/${file_name,,}" 1>&/dev/null # change all upercase letters in the name into uppercase
+                    
+                    if $lowercase_flag; then
+                        mv -- "$file_with_path" "$dir_name/${file_name,,}" 1>&/dev/null # change all upercase letters in the name into uppercase
+
+                    elif $uppercase_flag; then 
+                        mv -- "$file_with_path" "$dir_name/${file_name^^}" 1>&/dev/null # change all upercase letters in the name into uppercase
+
+                    elif [ $sed_pattern != "$item" ]; then
+                        mv -- "$file_with_path" "$dir_name/$(echo "$file_name" | sed "$1")" 1>&/dev/null   # change the name according to sed pattern
+                    fi
                 done
-            elif $uppercase_flag; then 
-                for file_with_path in $(find "$item" -type f)
-                do
-                    file_name=$(basename "$file_with_path")
-                    dir_name=$(dirname "$file_with_path")
-                    mv -- "$file_with_path" "$dir_name/${file_name^^}" 1>&/dev/null # change all upercase letters in the name into uppercase
-                done
-            elif [ $sed_pattern != "$item" ]; then
-                for file_with_path in $(find "$item" -type f)
-                do
-                    file_name=$(basename $file_with_path)
-                    dir_name=$(dirname $file_with_path)
-                    mv -- "$file_with_path" "$dir_name/$(echo "$file_name" | sed "$1")" 1>&/dev/null   # change the name according to sed pattern
-                done
-            fi
-        elif [ -f $item ]; then
+
+        elif [ -f $item ]; then # check if the item is a file; non-recursive variant
+            file_name=$(basename $item)
+            dir_name=$(dirname $item)
+            
             if $lowercase_flag; then
-                file_name=$(basename $item)
-                dir_name=$(dirname $item)
                 mv "$item" "$dir_name/${file_name,,}" 1>&/dev/null # change all upercase letters in the name into lowercase
 
             elif $uppercase_flag; then
-                file_name=$(basename $item)
-                dir_name=$(dirname $item)
                 mv "$item" "$dir_name/${file_name^^}" 1>&/dev/null # change all upercase letters in the name into lowercas
 
             elif [ $sed_pattern != "$item" ]; then                         
-                file_name=$(basename $item)
-                dir_name=$(dirname $item)
                 mv "$item" "$dir_name/$(echo "$file_name" | sed "$1")" 1>&/dev/null  # change the name according to sed pattern
             fi
         fi
