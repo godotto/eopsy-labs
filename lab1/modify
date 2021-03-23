@@ -45,7 +45,7 @@ else
     for item in "$@"
     do 
         if $recursion_flag; then # rename files in recursive way
-            for file_with_path in $(find "$item" -type f)
+            for file_with_path in $(find "$item" | tac)
                 do
                     file_name=$(basename "$file_with_path")
                     dir_name=$(dirname "$file_with_path")
@@ -61,7 +61,7 @@ else
                     fi
                 done
 
-        elif [ -f $item ]; then # check if the item is a file; non-recursive variant
+        else # non-recursive variant
             file_name=$(basename $item)
             dir_name=$(dirname $item)
             
