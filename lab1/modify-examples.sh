@@ -14,23 +14,29 @@ fi
 mkdir $test_dir && cd $test_dir
 
 # sample directories and files generation
-mkdir -p {test-dir1,\!test-dir2}/{test\*dir3,test\?dir4,"test dir5"}/-test-dir6
+mkdir -p {test-dir1,\!test-dir2}/{test\*dir3,test\&dir4,"test dir5"}/-test-dir6
 touch test1.txt
 touch test-dir1/test2.txt
 touch test-dir1/test\*dir3/te\*st3.txt
-touch test-dir1/test\?dir4/te\?st4.txt
+touch test-dir1/test\&dir4/te\&st4.txt
 touch \!test-dir2/test\ dir5/te\ st5.txt
-touch \!test-dir2/test\?dir4/-test-dir6/-test6.txt
+touch \!test-dir2/test\&dir4/-test-dir6/-test6.txt
 touch \!test-dir2/test\*dir3/te\ st7.txt
 touch test-dir1/test\ dir5/-test-dir6/test8.txt
 
 cd ..
 
+# print directories and files after generation
+echo "File structure used for testing purpose:"
+$file_structure_command
+read -p "Press enter to continue" # wait for user's action
+clear   # clear console
+
 # test case 1 - print help message with -h argument
 echo TEST CASE 1
 ./modify -h
 read -p "Press enter to continue" # wait for user's action
-clear
+clear   # clear console
 
 # test case 2 - run command without any options or files
 echo TEST CASE 2
