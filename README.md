@@ -27,3 +27,6 @@ Options:
  -h     display this help
 
 Alternatively, a SED PATTERN may be used instead of uppercase and lowercase options.
+
+### Testing
+The second task regarding the modify script was to create modify-examples.sh script which will lead several tests. To run tests just execute the script - everything including generation of sample file structure and cleaning it after execution is done automatically.
