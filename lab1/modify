@@ -39,25 +39,29 @@ EOT
 
     exit # terminate the script
 else
-    sed_pattern=$1  # if sed pattern will be used it will be taken from this variable
+    sed_pattern="$1"  # if sed pattern will be used it will be taken from this variable
     IFS=$'\n'   # set the delimiter as new line character to avoid wrong filenames in variables
 
     for item in "$@"
     do 
+        if ( ($uppercase_flag || $lowercase_flag) && (! [ -e "$item" ] ) || ( (! [ -e "$item" ] ) && [ "$sed_pattern" != "$item" ] ) ); then
+            echo "$item does not exist."
+        fi
+        
         if $recursion_flag; then # rename files in recursive way
-            for file_with_path in $(find "$item" | tac)
+            for file_with_path in $(find "$item" 2>/dev/null | tac)
                 do
                     file_name=$(basename "$file_with_path")
                     dir_name=$(dirname "$file_with_path")
                     
                     if $lowercase_flag; then
-                        mv -- "$file_with_path" "$dir_name/${file_name,,}" 1>&/dev/null # change all upercase letters in the name into uppercase
+                        mv -- "$file_with_path" "$dir_name/${file_name,,}" 2>/dev/null # change all upercase letters in the name into uppercase
 
                     elif $uppercase_flag; then 
-                        mv -- "$file_with_path" "$dir_name/${file_name^^}" 1>&/dev/null # change all upercase letters in the name into uppercase
+                        mv -- "$file_with_path" "$dir_name/${file_name^^}" 2>/dev/null # change all upercase letters in the name into uppercase
 
-                    elif [ $sed_pattern != "$item" ]; then
-                        mv -- "$file_with_path" "$dir_name/$(echo "$file_name" | sed "$1")" 1>&/dev/null   # change the name according to sed pattern
+                    elif [ "$sed_pattern" != "$item" ]; then
+                        mv -- "$file_with_path" "$dir_name/$(echo "$file_name" | sed "$1")" 2>/dev/null   # change the name according to sed pattern
                     fi
                 done
 
@@ -66,13 +70,13 @@ else
             dir_name=$(dirname $item)
             
             if $lowercase_flag; then
-                mv "$item" "$dir_name/${file_name,,}" 1>&/dev/null # change all upercase letters in the name into lowercase
+                mv "$item" "$dir_name/${file_name,,}" 2>/dev/null # change all upercase letters in the name into lowercase
 
             elif $uppercase_flag; then
-                mv "$item" "$dir_name/${file_name^^}" 1>&/dev/null # change all upercase letters in the name into lowercas
+                mv "$item" "$dir_name/${file_name^^}" 2>/dev/null # change all upercase letters in the name into lowercas
 
             elif [ $sed_pattern != "$item" ]; then                         
-                mv "$item" "$dir_name/$(echo "$file_name" | sed "$1")" 1>&/dev/null  # change the name according to sed pattern
+                mv "$item" "$dir_name/$(echo "$file_name" | sed "$1")" 2>/dev/null  # change the name according to sed pattern
             fi
         fi
     done
