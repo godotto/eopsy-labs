@@ -4,7 +4,7 @@
 test_dir="testing-directory"
 
 # if tree program is installed, use it to present changes in files in directories
-if [ -n $(command -v tree) ]; then
+if [ $(command -v tree) != '' ]; then
     file_structure_command="tree $test_dir"
 else
     file_structure_command="find $test_dir"
@@ -70,67 +70,86 @@ clear
 
 # test case 7
 echo -e "TEST CASE 7 - change letters to uppercase in one file\n"
+find $test_dir > file_structure_before.txt
 ./modify -u $test_dir/test1.txt
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 8
 echo -e "TEST CASE 8 - change letters to uppercase in two files with special characters in names\n"
+find $test_dir > file_structure_before.txt
 ./modify -u $test_dir/test-dir1/test\*dir3/te\*st3.txt $test_dir/\!test-dir2/test\*dir3/te\ st7.txt $test_dir/test-dir1/test2.txt
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 9
 echo -e "TEST CASE 9 - change letters to lowercase in one file\n"
+find $test_dir > file_structure_before.txt
 ./modify -l $test_dir/test-dir1/TEST2.TXT
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 10
 echo -e "TEST CASE 10 - change directory name with special characters according to sed pattern\n"
+find $test_dir > file_structure_before.txt
 ./modify "s/-/=/g" $test_dir/\!test-dir2/test\ dir5/-test-dir6/
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 11
 echo -e "TEST CASE 11 - run command with invalid sed pattern\n"
+find $test_dir > file_structure_before.txt
 ./modify "s/-/=" $test_dir/test-dir1/test\ dir5/-test-dir6/test8.txt
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 12
 echo -e "TEST CASE 12 - run command with non-existing file\n"
+find $test_dir > file_structure_before.txt
 ./modify -l $test_dir/TEST9.TXT
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 13
 echo -e "TEST CASE 13 - change letters into uppercase in a recursive way\n"
+find $test_dir > file_structure_before.txt
 ./modify -ru $test_dir/\!test-dir2
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 14
 echo -e "TEST CASE 14 - change letters into lowercase in a recursive way\n"
+find $test_dir > file_structure_before.txt
 ./modify -rl $test_dir/\!TEST-DIR2/TEST\&DIR4
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 # test case 15
 echo -e "TEST CASE 15 - change names according to sed pattern in every file and directory (in a recursive way)\n"
+find $test_dir > file_structure_before.txt
 ./modify -r "s/test/passed-test/" $test_dir
 test_dir=$(echo $test_dir | sed "s/test/passed-test/")
 file_structure_command=$(echo $file_structure_command | sed "s/test/passed-test/")
-$file_structure_command # print file structure
+find $test_dir > file_structure_after.txt
+diff --color -y file_structure_before.txt file_structure_after.txt
 read -p "Press enter to continue"
 clear
 
 rm -r $test_dir # tidy up testing directories
+rm file_structure*
