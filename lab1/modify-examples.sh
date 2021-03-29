@@ -4,7 +4,7 @@
 test_dir="testing-directory"
 
 # if tree program is installed, use it to present changes in files in directories
-if [ $(command -v tree) != '' ]; then
+if [ "$(command -v tree)" != '' ]; then
     file_structure_command="tree $test_dir"
 else
     file_structure_command="find $test_dir"
