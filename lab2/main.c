@@ -8,7 +8,7 @@
 
 int main()
 {
-    pid_t child_processes[NUM_CHILD];   // array which holds PIDs 
+    pid_t child_processes[NUM_CHILD]; // array which holds PIDs
 
     for (int i = 0; i < NUM_CHILD; i++) // create NUM_CHILD child processes in the loop
     {
@@ -24,7 +24,7 @@ int main()
             // print message about error and send SIGTERM to already created processes
             perror("parent[%d]: child process creation failure");
 
-            for (int j = 0; j < NUM_CHILD; j++)
+            for (int j = 0; j < i; j++)
                 kill(child_processes[j], SIGTERM);
 
             // terminate with failure code
@@ -43,17 +43,23 @@ int main()
         default:
             break;
         }
-        
+
         sleep(1); // make one second of delay between each fork call
     }
 
     printf("parent[%d]: all children have been created\n", getpid());
 
-    while (wait(NULL) > 0) // wait until all children has been terminated
+    int status;                 // exit code of child process
+    int terminatedChildren = 0; // number of children with process
+
+    while (wait(&status) > 0) // wait until all children has been exit code 0
     {
+        if (status == EXIT_SUCCESS)
+            terminatedChildren++;
     }
 
     printf("parent[%d]: all children have been terminated\n", getpid());
+    printf("parent[%d]: %d children have been terminted with 0 exit code\n", getpid(), terminatedChildren);
 
     return 0;
 }
