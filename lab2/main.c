@@ -10,6 +10,21 @@ int main()
 {
     pid_t child_processes[NUM_CHILD]; // array which holds PIDs
 
+#ifdef WITH_SIGNALS
+    struct sigaction old_actions[_NSIG]; // array with old actions which after exexuction will be restored
+    
+    // ignore all singals coming to this process
+    for (int i = 0; i < _NSIG; i++)
+    {
+        struct sigaction sa;
+        sa.sa_handler = SIG_IGN;
+        sigaction(i, &sa, &old_actions[i]);
+    }
+
+    sigaction(SIGCHLD, &old_actions[SIGCHLD], NULL); // restore default SIGCHILD handler
+
+#endif
+
     for (int i = 0; i < NUM_CHILD; i++) // create NUM_CHILD child processes in the loop
     {
         // fork process and save child's PID to the array
