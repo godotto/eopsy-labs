@@ -16,6 +16,12 @@
         interrupt_occured = true; // set mark to true
         printf("parent[%d]: keyboard interrupt received\n", getpid());
     }
+
+    // new terminate handler for children
+    void newTerminateHandler()
+    {
+        printf("child[%d]: process terminated\n", getpid());
+    }
 #endif
 
 int main()
@@ -44,6 +50,18 @@ int main()
 
     for (int i = 0; i < NUM_CHILD; i++) // create NUM_CHILD child processes in the loop
     {
+        #ifdef WITH_SIGNALS
+            // if interrupt occured, abort creation process and send SIGTERM to created children
+            if (interrupt_occured)
+            {
+                for (int j = 0; j < i; j++)
+                    kill(child_processes[j], SIGTERM);
+                
+                printf("parent[%d]: child process creation interrupt\n", getpid());
+                break;
+            }
+        #endif
+        
         // fork process and save child's PID to the array
         pid_t child_pid = fork();
         child_processes[i] = child_pid;
@@ -54,7 +72,7 @@ int main()
         // child creating was unsuccessful
         case -1:
             // print message about error and send SIGTERM to already created processes
-            printf("parent[%d]: child process creation failure", getpid());
+            printf("parent[%d]: child process creation failure\n", getpid());
 
             for (int j = 0; j < i; j++)
                 kill(child_processes[j], SIGTERM);
@@ -64,6 +82,16 @@ int main()
 
         // child has been created and current process is child
         case 0:
+            #ifdef WITH_SIGNALS
+                // ignore interrupt signal
+                sa.sa_handler = SIG_IGN;
+                sigaction(SIGINT, &sa, NULL);
+
+                // set new terminate handler
+                sa.sa_handler = &newTerminateHandler;
+                sigaction(SIGTERM, &sa, NULL);
+            #endif
+            
             // print message, wait for 10 seconds and print next message
             printf("child[%d]: parent's PID=%d\n", getpid(), getppid());
             sleep(10);
@@ -79,6 +107,9 @@ int main()
         sleep(1); // make one second of delay between each fork call
     }
 
+    #ifdef WITH_SIGNALS
+        if (!interrupt_occured) // if interrupt occured don't print the message
+    #endif
     printf("parent[%d]: all children have been created\n", getpid());
 
     int status;                 // exit code of child process
