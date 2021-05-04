@@ -124,5 +124,11 @@ int main()
     printf("parent[%d]: all children have been terminated\n", getpid());
     printf("parent[%d]: %d children have been terminted with 0 exit code\n", getpid(), terminatedChildren);
 
+    #ifdef WITH_SIGNALS
+        /// restore old handlers
+        for (int i = 0; i < _NSIG; i++)
+            sigaction(i, &old_actions[i], NULL);
+    #endif
+
     return 0;
 }
