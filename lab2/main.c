@@ -3,8 +3,20 @@
 #include <unistd.h>
 #include <wait.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #define NUM_CHILD 8
+
+#ifdef WITH_SIGNALS
+    bool interrupt_occured = false; // if true, interrupt signal has been sent
+
+    // new interrupt handler which prints information and sets the mark
+    void newInterruptHandler()
+    {
+        interrupt_occured = true; // set mark to true
+        printf("parent[%d]: keyboard interrupt received\n", getpid());
+    }
+#endif
 
 int main()
 {
@@ -23,6 +35,11 @@ int main()
 
     sigaction(SIGCHLD, &old_actions[SIGCHLD], NULL); // restore default SIGCHILD handler
 
+    // set new interrupt handler
+    struct sigaction sa;
+    sa.sa_handler = &newInterruptHandler;
+    sigaction(SIGINT, &sa, NULL);
+
 #endif
 
     for (int i = 0; i < NUM_CHILD; i++) // create NUM_CHILD child processes in the loop
@@ -37,7 +54,7 @@ int main()
         // child creating was unsuccessful
         case -1:
             // print message about error and send SIGTERM to already created processes
-            perror("parent[%d]: child process creation failure");
+            printf("parent[%d]: child process creation failure", getpid());
 
             for (int j = 0; j < i; j++)
                 kill(child_processes[j], SIGTERM);
