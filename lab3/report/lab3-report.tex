@@ -97,5 +97,83 @@ simulator).
 Both processes has been executed in four, 500 ms long intervals. They blocked for input
 3 times each. After last 500 ms they did not block but just terminated.
 
+\section{Simulation of 5 processes}
+\subsection{Simulator's output}
+\subsubsection*{Summary -- results}
+\ttfamily
+Scheduling Type: Batch (Nonpreemptive)\\
+Scheduling Name: First-Come First-Served\\
+Simulation Run Time: 10000\\
+Mean: 2000\\
+Standard Deviation: 0\\
+\begin{tabular}{@{}l l l l l}
+    Process \#&	CPU Time&	IO Blocking&	CPU Completed&	CPU Blocked\\
+    0		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    1		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    2		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    3		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    4		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times
+\end{tabular}
+
+\subsubsection*{Summary -- processes}
+Process: 0 registered... (2000 500 0 0)\\
+Process: 0 I/O blocked... (2000 500 500 500)\\
+Process: 1 registered... (2000 500 0 0)\\
+Process: 1 I/O blocked... (2000 500 500 500)\\
+Process: 0 registered... (2000 500 500 500)\\
+Process: 0 I/O blocked... (2000 500 1000 1000)\\
+Process: 1 registered... (2000 500 500 500)\\
+Process: 1 I/O blocked... (2000 500 1000 1000)\\
+Process: 0 registered... (2000 500 1000 1000)\\
+Process: 0 I/O blocked... (2000 500 1500 1500)\\
+Process: 1 registered... (2000 500 1000 1000)\\
+Process: 1 I/O blocked... (2000 500 1500 1500)\\
+Process: 0 registered... (2000 500 1500 1500)\\
+Process: 0 completed... (2000 500 2000 2000)\\
+Process: 1 registered... (2000 500 1500 1500)\\
+Process: 1 completed... (2000 500 2000 2000)\\
+Process: 2 registered... (2000 500 0 0)\\
+Process: 2 I/O blocked... (2000 500 500 500)\\
+Process: 3 registered... (2000 500 0 0)\\
+Process: 3 I/O blocked... (2000 500 500 500)\\
+Process: 2 registered... (2000 500 500 500)\\
+Process: 2 I/O blocked... (2000 500 1000 1000)\\
+Process: 3 registered... (2000 500 500 500)\\
+Process: 3 I/O blocked... (2000 500 1000 1000)\\
+Process: 2 registered... (2000 500 1000 1000)\\
+Process: 2 I/O blocked... (2000 500 1500 1500)\\
+Process: 3 registered... (2000 500 1000 1000)\\
+Process: 3 I/O blocked... (2000 500 1500 1500)\\
+Process: 2 registered... (2000 500 1500 1500)\\
+Process: 2 completed... (2000 500 2000 2000)\\
+Process: 3 registered... (2000 500 1500 1500)\\
+Process: 3 completed... (2000 500 2000 2000)\\
+Process: 4 registered... (2000 500 0 0)\\
+Process: 4 I/O blocked... (2000 500 500 500)\\
+Process: 4 registered... (2000 500 500 500)\\
+Process: 4 I/O blocked... (2000 500 1000 1000)\\
+Process: 4 registered... (2000 500 1000 1000)\\
+Process: 4 I/O blocked... (2000 500 1500 1500)\\
+Process: 4 registered... (2000 500 1500 1500)
+
+\rmfamily
+
+\subsection{Comments}
+Once again each process has been properly executed as total required time fits perfectly
+given max time of 10000 ms for simulation (it is just 5 times 2000 ms). Scheduler choose
+processes in the same manner as last time. However, after the first blocking of process 1's
+I/O, scheduler registered process 0, not process 2 as it might seem more resonable at the
+first glance. 
+
+The reason for that is the way scheduling is done in simulation -- FCFS.
+When process blocks, process 0 is unblocked and ready to be run. As it is the first in queue,
+the scheduler chooses it to be registered instead of process 2. Because of that,
+processes 2 and 3 had been executed when 0 and 1 were terminated. The same applies for the last,
+5th process -- it has been registered after execution of processes 2 and 3 was completed.
+
+One more interesting remark is that even in \emph{summary -- results} it was told that
+process 4 was running for required 2000 ms of time and still there was no trace of process'
+termination. It happend probably most likely due to simulation termination exactly after 10000 ms
+as it was specifed in configuration. It did not have any time left for proper termination.
 
 \end{document}
