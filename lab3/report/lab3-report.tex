@@ -1,7 +1,7 @@
 \documentclass{article}
 
 \usepackage{geometry}
-\usepackage{tabularx,array}
+\usepackage[super]{nth}
 
 \title{Scheduling basics with MOSS Scheduling Simulator -- an EOPSY laboratory}
 \author{Maciej Marcinkiewicz}
@@ -169,11 +169,92 @@ The reason for that is the way scheduling is done in simulation -- FCFS.
 When process blocks, process 0 is unblocked and ready to be run. As it is the first in queue,
 the scheduler chooses it to be registered instead of process 2. Because of that,
 processes 2 and 3 had been executed when 0 and 1 were terminated. The same applies for the last,
-5th process -- it has been registered after execution of processes 2 and 3 was completed.
+\nth{5} process -- it has been registered after execution of processes 2 and 3 was completed.
 
 One more interesting remark is that even in \emph{summary -- results} it was told that
 process 4 was running for required 2000 ms of time and still there was no trace of process'
 termination. It happend probably most likely due to simulation termination exactly after 10000 ms
 as it was specifed in configuration. It did not have any time left for proper termination.
+
+\section{Simulation of 10 processes}
+\subsection{Simulator's output}
+\subsubsection*{Summary -- results}
+\ttfamily
+Scheduling Type: Batch (Nonpreemptive)\\
+Scheduling Name: First-Come First-Served\\
+Simulation Run Time: 10000\\
+Mean: 2000\\
+Standard Deviation: 0\\
+\begin{tabular}{@{}l l l l l}
+    Process \#&	CPU Time&	IO Blocking&	CPU Completed&	CPU Blocked\\
+    0		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    1		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    2		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    3		&2000 (ms)	&500 (ms)	&2000 (ms)	&3 times\\
+    4		&2000 (ms)	&500 (ms)	&1000 (ms)	&2 times\\
+    5		&2000 (ms)	&500 (ms)	&1000 (ms)	&1 times\\
+    6		&2000 (ms)	&500 (ms)	&0 (ms)		&0 times\\
+    7		&2000 (ms)	&500 (ms)	&0 (ms)		&0 times\\
+    8		&2000 (ms)	&500 (ms)	&0 (ms)		&0 times\\
+    9		&2000 (ms)	&500 (ms)	&0 (ms)		&0 times
+\end{tabular}
+
+\subsubsection*{Summary -- processes}
+Process: 0 registered... (2000 500 0 0)\\
+Process: 0 I/O blocked... (2000 500 500 500)\\
+Process: 1 registered... (2000 500 0 0)\\
+Process: 1 I/O blocked... (2000 500 500 500)\\
+Process: 0 registered... (2000 500 500 500)\\
+Process: 0 I/O blocked... (2000 500 1000 1000)\\
+Process: 1 registered... (2000 500 500 500)\\
+Process: 1 I/O blocked... (2000 500 1000 1000)\\
+Process: 0 registered... (2000 500 1000 1000)\\
+Process: 0 I/O blocked... (2000 500 1500 1500)\\
+Process: 1 registered... (2000 500 1000 1000)\\
+Process: 1 I/O blocked... (2000 500 1500 1500)\\
+Process: 0 registered... (2000 500 1500 1500)\\
+Process: 0 completed... (2000 500 2000 2000)\\
+Process: 1 registered... (2000 500 1500 1500)\\
+Process: 1 completed... (2000 500 2000 2000)\\
+Process: 2 registered... (2000 500 0 0)\\
+Process: 2 I/O blocked... (2000 500 500 500)\\
+Process: 3 registered... (2000 500 0 0)\\
+Process: 3 I/O blocked... (2000 500 500 500)\\
+Process: 2 registered... (2000 500 500 500)\\
+Process: 2 I/O blocked... (2000 500 1000 1000)\\
+Process: 3 registered... (2000 500 500 500)\\
+Process: 3 I/O blocked... (2000 500 1000 1000)\\
+Process: 2 registered... (2000 500 1000 1000)\\
+Process: 2 I/O blocked... (2000 500 1500 1500)\\
+Process: 3 registered... (2000 500 1000 1000)\\
+Process: 3 I/O blocked... (2000 500 1500 1500)\\
+Process: 2 registered... (2000 500 1500 1500)\\
+Process: 2 completed... (2000 500 2000 2000)\\
+Process: 3 registered... (2000 500 1500 1500)\\
+Process: 3 completed... (2000 500 2000 2000)\\
+Process: 4 registered... (2000 500 0 0)\\
+Process: 4 I/O blocked... (2000 500 500 500)\\
+Process: 5 registered... (2000 500 0 0)\\
+Process: 5 I/O blocked... (2000 500 500 500)\\
+Process: 4 registered... (2000 500 500 500)\\
+Process: 4 I/O blocked... (2000 500 1000 1000)\\
+Process: 5 registered... (2000 500 500 500)
+
+\rmfamily
+
+\subsection{Comments}
+This time not all of processes have been executed. Only four of them were
+running for 2000 ms. Next two were executed partially. The rest were never registered
+by scheduler. The reson for that is limited runtime. In order to run all of these processes
+for 2000 ms runtime should be set for 20000 ms.
+
+Compared to the previous simulation, even process 4 was not executed completly.
+When it was blocked in this simulation there was another process in queue, so scheduler registered
+it. That is why instead of one process running for 2000 ms there are two of them running for
+1000 ms.
+
+The last interesting thing is that process 5's I/O was blocked 1 time less than 4's.
+It happend because process 5 was waiting its 500 ms as it should, however as in the previous
+simulation there was no time for another action after reaching runtime limit.
 
 \end{document}
