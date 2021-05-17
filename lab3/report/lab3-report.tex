@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{geometry}
+\usepackage{tabularx,array}
 
 \title{Scheduling basics with MOSS Scheduling Simulator -- an EOPSY laboratory}
 \author{Maciej Marcinkiewicz}
@@ -38,6 +39,63 @@ Each process had 500 ms of I/O blocking, so processes after each 500 ms of runni
 were blocking input or output. The last parameter, runtime, was set to 10000 ms.
 It was the maximal possible time of execution for the whole simulation.
 
+\newpage
+
 \section{Simulation of 2 processes}
+\subsection{Simulator's output}
+\subsubsection*{Summary -- results}
+\ttfamily
+
+Scheduling Type: Batch (Nonpreemptive)\\
+Scheduling Name: First-Come First-Served\\
+Simulation Run Time: 4000\\
+Mean: 2000\\
+Standard Deviation: 0\\
+\begin{tabular}{@{}l l l l l}
+    Process \# &	CPU Time &	IO Blocking &	CPU Completed &	CPU Blocked\\
+    0		    &2000 (ms)	&500 (ms)	&2000 (ms)	    &3 times\\
+    1		    &2000 (ms)	&500 (ms)	&2000 (ms)	    &3 times
+\end{tabular}
+
+\subsubsection*{Summary -- processes}
+Process: 0 registered... (2000 500 0)\\
+Process: 0 I/O blocked... (2000 500 500)\\
+Process: 1 registered... (2000 500 0)\\
+Process: 1 I/O blocked... (2000 500 500)\\
+Process: 0 registered... (2000 500 500)\\
+Process: 0 I/O blocked... (2000 500 1000)\\
+Process: 1 registered... (2000 500 500)\\
+Process: 1 I/O blocked... (2000 500 1000)\\
+Process: 0 registered... (2000 500 1000)\\
+Process: 0 I/O blocked... (2000 500 1500)\\
+Process: 1 registered... (2000 500 1000)\\
+Process: 1 I/O blocked... (2000 500 1500)\\
+Process: 0 registered... (2000 500 1500)\\
+Process: 0 completed... (2000 500 2000)\\
+Process: 1 registered... (2000 500 1500)\\
+Process: 1 completed... (2000 500 2000)
+
+\rmfamily
+
+\subsection{Comments}
+The simulation lasted for 4000 ms -- 2000 ms for each of two processes. Both processes
+has been executed properly and were given required time. The way of processing them
+was very simple and repetitive. Starting from the beginning, process 0 has been acknowledged
+by the scheduler and was running 500 ms until it blocked its I/O.
+
+Blocked processes are unable to run until some external event happens, so it means that
+another process from queue can be run instead. After blocking process 0, the same pattern
+is happening to process 1 -- it runs for 500 ms and then it blocks I/O.
+
+While process 1 is blocked, process is ready again, it is once again reqistered by scheduler
+and it starts its execution. Same as previously after 500 ms it blocks its I/O and then
+process 1 is registered by the scheduler. Whole pattern is repeated until processes'
+total time reaches the required 2000 ms. After such amount of time process does not
+blocks its I/O and it terminates (which is represented as \emph{completed} message from
+simulator).
+
+Both processes has been executed in four, 500 ms long intervals. They blocked for input
+3 times each. After last 500 ms they did not block but just terminated.
+
 
 \end{document}
