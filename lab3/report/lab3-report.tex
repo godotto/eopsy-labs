@@ -1,0 +1,43 @@
+\documentclass{article}
+
+\usepackage{geometry}
+
+\title{Scheduling basics with MOSS Scheduling Simulator -- an EOPSY laboratory}
+\author{Maciej Marcinkiewicz}
+\date{17th May 2021}
+
+\newgeometry{lmargin=3.2cm, rmargin=3.2cm, bmargin=2.5cm}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\subsection{Brief description of the task}
+The main purpose of this laboratory was to get students familiarized with the basics of
+process scheduling in operating systems. For that purpose MOSS Scheduling Simulator had to
+be used. The task was to run 2, 5 and 10 processes in 10000 ms long simulation and
+to analyse simulation's output data.
+
+In the simulator one may specify number of processes, the mean and standard deviation
+for compute time, I/O blocking time for each process and the duration time of whole simulation.
+
+\subsection{Environment description}
+In this laboratory simulated situation is very simple -- \emph{first come, first serve}
+(FCFS) algorithm is being used. The process that is on the top of
+ready queue is run for desired amount of time without any pausing. It is a \emph{non-preemptive scheduler}, so the simulated
+operating system cannot interrupt processes in order to allow another process of higher priority for
+execution. Instead the tasks are being done for such long time it is needed by the current process.
+Such operating systmes are called \emph{batch operating systems}.
+
+\subsection{Environment configuration}
+Each simulation had the same parameters. Mean deviation time was set to 2000 ms whereas
+standard deviation was set to 0 ms. It means that each simulated process was running
+for 2000 ms before termination and no randomness of that time was supplied.
+Each process had 500 ms of I/O blocking, so processes after each 500 ms of running
+were blocking input or output. The last parameter, runtime, was set to 10000 ms.
+It was the maximal possible time of execution for the whole simulation.
+
+\section{Simulation of 2 processes}
+
+\end{document}
