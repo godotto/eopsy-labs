@@ -2,11 +2,18 @@
 .vscode/
 
 # text files for testing purpose
-*.txt
-*.TXT
+lab1/*.txt
+lab1/*.TXT
 
 # shell script for experiments and trying different stuff 
 test.sh
 
 # executables
 tsig
+
+# lab 3 simulation software + manuals
+lab3/moss-simulator/
+
+# LaTeX build files and compiled PDF documents
+*.pdf
+*.synctex.gz
