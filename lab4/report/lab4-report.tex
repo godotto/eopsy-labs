@@ -17,7 +17,7 @@
 \section{Introduction}
 \subsection{Brief description of the task}
 The goal of this laboratory was to introduce students to the principles of memory management
-in operating systems. As last time, a MOSS simultor came in handy for that purpose (Memory Management simultor to be more precise).
+in operating systems. As last time, a MOSS simulator came in handy for that purpose (Memory Management simulator to be more precise).
 Laboratory's main task was to map any 8 pages of physical memory to the first 8 pages of virtual memory and then run simulation
 to read each of 64 virtual memory pages.
 
@@ -137,5 +137,37 @@ READ fc000 ... page fault
 \normalsize
 
 \subsection{Comments}
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.7\linewidth]{img/initial_state.png}
+    \caption{Initial state of simulation.}
+\end{figure}
+
+In the beginning physical pages 0-31 are assigned to virtual pages 0-31 (fig. 1). Pages 
+8-31 are mapped by simulator (probably it is its default behaviour). Due
+to some sort of glitch simulator does not show changes that had been made to virtual pages
+2-7, however inspecting each of these virtual pages show that they are indeed mapped with
+those physical pages mentioned in the introduction to this laboratory.
+
+Before running the simulation it is clear that starting from page 32 up to the final one
+it will encounter \emph{page faults}. Page fault happens when a non-mapped virtual page
+is being referenced. In such case a \emph{page replacement} algorithm should work and
+map a physical page by itself. The first requested address with page fault would be
+0x80000 -- 32 pages were mapped, so it had to be \nth{33} page and $32_{10} \cdot 4000_{16} = 80000_{16}$.
+
+Tracefile produced by simulator shows that in fact page 32 is the first one which encountered
+a page fault. Fig. 2 shows that the replacement order of pages is the same as pages mapping
+for the first half of virtual pages. For instance, virtual page 36 had been mapped to physical
+page 21, so the same page as it was mapped to page 4.
+\newpage
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.7\linewidth]{img/final_state.png}
+    \caption{Final state of simulation.}
+\end{figure}
+
+Such behaviour means that the page replacement algorithm has to be \emph{First In, First Out} (FIFO).
+Operating system is tracking every page in queue, so when there is a need for page replacement,
+it uses page from the front of the queue, i.e. the oldest page.
 
 \end{document}
