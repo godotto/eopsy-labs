@@ -11,8 +11,8 @@ test.sh
 # executables
 tsig
 
-# lab 3 simulation software + manuals
-lab3/moss-simulator/
+# lab 3 and 4 simulation software + manuals
+moss-simulator/
 
 # LaTeX build files and compiled PDF documents
 *.pdf
