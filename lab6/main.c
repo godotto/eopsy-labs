@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+#define BUFFER_SIZE 32
+
 // display help info
 void print_help()
 {
@@ -18,20 +20,31 @@ void print_help()
 // function with main functionality of the program
 bool copy(bool mode_flag, char *file_to_copy, char *new_file)
 {
-    // creating file descriptors for both files
+    // creating file descriptor for old file and error checking
     int fd_old = open(file_to_copy, O_RDONLY);
-    int fd_new = creat(new_file, S_IRWXU);
-
-    // error checking
     if (fd_old == -1)
     {
         printf("Could not open file %s\n", file_to_copy);
         return EXIT_FAILURE;
     }
 
+    // creating file descriptor for new file and error checking
+    int fd_new = creat(new_file, S_IRWXU);
     if (fd_new == -1)
     {
         printf("Could not create new file %s\n", new_file);
+        return EXIT_FAILURE;
+    }
+
+    // create buffer and start reading the old file
+    char buf[BUFFER_SIZE];
+    ssize_t num_of_bytes = read(fd_old, buf, BUFFER_SIZE);
+
+    // 0 in num_of_bytes indicates EOF
+    while(num_of_bytes != 0)
+    {
+        write(fd_new, buf, num_of_bytes);
+        num_of_bytes = read(fd_old, buf, BUFFER_SIZE);
     }
 
     // close file descriptors
