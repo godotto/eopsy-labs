@@ -67,7 +67,7 @@ bool copy(bool mode_flag, char *file_to_copy, char *new_file)
     }
 
     // creating file descriptor for new file and error checking
-    int fd_to = creat(new_file, S_IRWXU);
+    int fd_to = open(new_file, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
     if (fd_to == -1)
     {
         printf("Could not create new file %s\n", new_file);
