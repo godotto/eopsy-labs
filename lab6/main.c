@@ -59,7 +59,7 @@ void copy_mmap(int fd_from, int fd_to)
     write(fd_to, "", 1);
     void *address_to = mmap(NULL, file_size, PROT_WRITE, MAP_SHARED, fd_to, (off_t)0);
 
-    if (address_from == -1 || address_to == -1)
+    if (address_from == (void *)-1 || address_to == (void *)-1)
     {
         printf("Error while mapping the file\n");
         exit(EXIT_FAILURE);
