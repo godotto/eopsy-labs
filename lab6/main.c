@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define BUFFER_SIZE 32
 
@@ -17,39 +18,70 @@ void print_help()
     printf("copy [-h] - print this help message\n");
 }
 
+// copying with read() and write()
+void copy_read_write(int fd_from, int fd_to)
+{
+    // create buffer and start reading the old file
+    char buf[BUFFER_SIZE];
+    ssize_t num_of_bytes = read(fd_from, buf, BUFFER_SIZE);
+
+    // 0 in num_of_bytes indicates EOF
+    while (num_of_bytes != 0)
+    {
+        write(fd_to, buf, num_of_bytes);
+        num_of_bytes = read(fd_from, buf, BUFFER_SIZE);
+    }
+}
+
+// copying with mmap
+void copy_mmap(int fd_from, int fd_to)
+{
+    // get the size of the file to copy
+    off_t file_size = lseek(fd_from, (off_t)0, SEEK_END);
+
+    // map file to copy into memory
+    void *address_from = mmap(NULL, file_size, PROT_READ, MAP_SHARED, fd_from, (off_t)0);
+
+    // resize new file and map it
+    lseek(fd_to, file_size - 1, SEEK_SET);
+    write(fd_to, "", 1);
+    void *address_to = mmap(NULL, file_size, PROT_WRITE, MAP_SHARED, fd_to, (off_t)0);
+
+    // copy memory
+    memcpy(address_to, address_from, file_size);
+
+    // unmap memory
+    munmap(address_from, file_size);
+    munmap(address_to, file_size);
+}
+
 // function with main functionality of the program
 bool copy(bool mode_flag, char *file_to_copy, char *new_file)
 {
     // creating file descriptor for old file and error checking
-    int fd_old = open(file_to_copy, O_RDONLY);
-    if (fd_old == -1)
+    int fd_from = open(file_to_copy, O_RDONLY);
+    if (fd_from == -1)
     {
         printf("Could not open file %s\n", file_to_copy);
         return EXIT_FAILURE;
     }
 
     // creating file descriptor for new file and error checking
-    int fd_new = creat(new_file, S_IRWXU);
-    if (fd_new == -1)
+    int fd_to = creat(new_file, S_IRWXU);
+    if (fd_to == -1)
     {
         printf("Could not create new file %s\n", new_file);
         return EXIT_FAILURE;
     }
 
-    // create buffer and start reading the old file
-    char buf[BUFFER_SIZE];
-    ssize_t num_of_bytes = read(fd_old, buf, BUFFER_SIZE);
-
-    // 0 in num_of_bytes indicates EOF
-    while(num_of_bytes != 0)
-    {
-        write(fd_new, buf, num_of_bytes);
-        num_of_bytes = read(fd_old, buf, BUFFER_SIZE);
-    }
+    if (!mode_flag)
+        copy_read_write(fd_from, fd_to);
+    else
+        copy_mmap(fd_from, fd_to);
 
     // close file descriptors
-    close(fd_old);
-    close(fd_new);
+    close(fd_from);
+    close(fd_to);
 }
 
 int main(int argc, char *argv[])
