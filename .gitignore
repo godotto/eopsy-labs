@@ -10,6 +10,7 @@ test.sh
 
 # executables
 tsig
+philosophers
 
 # lab 3 and 4 simulation software + manuals
 moss-simulator/
