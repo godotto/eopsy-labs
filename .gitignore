@@ -4,6 +4,7 @@
 # text files for testing purpose
 lab1/*.txt
 lab1/*.TXT
+lab6/*.txt
 
 # shell script for experiments and trying different stuff 
 test.sh

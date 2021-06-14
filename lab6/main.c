@@ -15,6 +15,30 @@ void print_help()
     printf("copy [-h] - print this help message\n");
 }
 
+// function with main functionality of the program
+bool copy(bool mode_flag, char *file_to_copy, char *new_file)
+{
+    // creating file descriptors for both files
+    int fd_old = open(file_to_copy, O_RDONLY);
+    int fd_new = creat(new_file, S_IRWXU);
+
+    // error checking
+    if (fd_old == -1)
+    {
+        printf("Could not open file %s\n", file_to_copy);
+        return EXIT_FAILURE;
+    }
+
+    if (fd_new == -1)
+    {
+        printf("Could not create new file %s\n", new_file);
+    }
+
+    // close file descriptors
+    close(fd_old);
+    close(fd_new);
+}
+
 int main(int argc, char *argv[])
 {
     char param;             // getopt option
@@ -24,19 +48,19 @@ int main(int argc, char *argv[])
     {
         switch (param)
         {
-            // if -h, print help info
-            case 'h':
-                print_help();
-                return EXIT_SUCCESS;
-            // if -m, mark mmap mode 
-            case 'm':
-                mode_flag = true;
-                break;
-            // print help info and return failure code when argument does not exist
-            default:
-                printf("Wrong argument\n");
-                print_help();
-                return EXIT_FAILURE;
+        // if -h, print help info
+        case 'h':
+            print_help();
+            return EXIT_SUCCESS;
+        // if -m, mark mmap mode
+        case 'm':
+            mode_flag = true;
+            break;
+        // print help info and return failure code when argument does not exist
+        default:
+            printf("Wrong argument\n");
+            print_help();
+            return EXIT_FAILURE;
         }
     }
 
@@ -48,5 +72,6 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    return EXIT_SUCCESS;
+    // copy file and exit with the right exit code provided by copy function
+    return copy(mode_flag, argv[optind], argv[optind + 1]);
 }
